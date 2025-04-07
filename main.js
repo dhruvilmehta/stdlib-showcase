@@ -188,9 +188,8 @@ function drawScene(path, index) {
   drawGrid();
   drawAxes();
 
-  // Draw the curve joining points
   ctx.beginPath();
-  ctx.strokeStyle = "rgba(0, 0, 255, 0.5)"; // Blue curve with some transparency
+  ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
   ctx.lineWidth = 2;
   for (let j = 0; j <= index; j = add(j, 1)) {
     const [x, y] = path[j];
@@ -218,11 +217,8 @@ function getSelectedFunction() {
     const gradYInput = document.getElementById("customGradY").value;
 
     try {
-      // eslint-disable-next-line no-new-func
       const f = new Function("x", "y", `return ${fInput}`);
-      // eslint-disable-next-line no-new-func
       const gradX = new Function("x", "y", `return ${gradXInput}`);
-      // eslint-disable-next-line no-new-func
       const gradY = new Function("x", "y", `return ${gradYInput}`);
       return {
         f: (x, y) => f(x, y),
@@ -230,7 +226,7 @@ function getSelectedFunction() {
       };
     } catch (e) {
       console.error("Invalid custom function:", e);
-      return getSelectedFunction("circle"); // Fallback to circle if error
+      return getSelectedFunction("circle");
     }
   }
 
@@ -405,5 +401,4 @@ canvas.addEventListener("mouseleave", () => {
   drawScene(animationPath, animationIndex);
 });
 
-// Auto-start
 runButton.click();
