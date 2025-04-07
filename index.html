@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>2D Gradient Descent Visualizer</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, #f0f4f8 0%, #e1e8ed 100%);
+        padding: 3rem;
+        text-align: center;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        color: #2c3e50;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin: 0 0 2rem 0;
+        max-width: 600px;
+      }
+      canvas {
+        border: none;
+        margin-top: 2rem;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+      }
+      canvas:hover {
+        transform: translateY(-2px);
+      }
+      .controls {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        width: 100%;
+        transition: transform 0.3s ease;
+      }
+      .controls:hover {
+        transform: translateY(-2px);
+      }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #34495e;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+      input[type="range"],
+      input[type="number"],
+      input[type="text"],
+      select {
+        padding: 0.5rem;
+        border: 1px solid #dfe6e9;
+        border-radius: 6px;
+        background: #f9fafb;
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease;
+      }
+      input[type="range"]:focus,
+      input[type="number"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        border-color: #3498db;
+        outline: none;
+      }
+      input[type="range"] {
+        width: 100px;
+        cursor: ew-resize;
+      }
+      input[type="number"] {
+        width: 60px;
+      }
+      input[type="text"] {
+        width: 150px;
+      }
+      select {
+        padding-right: 1.5rem;
+        cursor: pointer;
+      }
+      span {
+        min-width: 2rem;
+        text-align: left;
+        color: #2c3e50;
+      }
+      button {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+      #customInputs {
+        display: none;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 1.5rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        .controls {
+          gap: 1rem;
+          padding: 1rem;
+        }
+        label {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        input[type="range"] {
+          width: 80px;
+        }
+        input[type="text"] {
+          width: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎯 2D Gradient Descent Visualizer</h1>
+    <p>
+      Explore the journey of gradient descent as it minimizes complex 2D
+      functions in real-time.
+    </p>
+
+    <div class="controls">
+      <label
+        >Initial X:
+        <input
+          type="range"
+          id="initX"
+          min="-10"
+          max="10"
+          step="0.1"
+          value="5"
+        />
+        <span id="initXVal">5</span>
+      </label>
+
+      <label
+        >Initial Y:
+        <input
+          type="range"
+          id="initY"
+          min="-10"
+          max="10"
+          step="0.1"
+          value="5"
+        />
+        <span id="initYVal">5</span>
+      </label>
+
+      <label
+        >Learning Rate:
+        <input
+          type="range"
+          id="lr"
+          min="0.01"
+          max="1"
+          step="0.01"
+          value="0.1"
+        />
+        <span id="lrVal">0.1</span>
+      </label>
+
+      <label
+        >Steps:
+        <input type="number" id="steps" min="1" max="100" value="30" />
+      </label>
+
+      <label
+        >Speed (ms/step):
+        <input
+          type="range"
+          id="speed"
+          min="10"
+          max="1000"
+          step="10"
+          value="200"
+        />
+        <span id="speedVal">200</span>ms
+      </label>
+
+      <label>
+        Function:
+        <select id="functionSelect">
+            <option value="simple">f(x, y) = x² + 2y²</option>
+          <option value="circle">f(x, y) = x² + y²</option>
+          <option value="egg">f(x, y) = x² + sin(y)</option>
+          <option value="ellipse">f(x, y) = 2x² + y²</option>
+          <option value="rastrigin">
+            f(x, y) = 20 + x² + y² - 10(cos(2πx) + cos(2πy))
+          </option>
+          <option value="ackley">
+            f(x, y) = -20e^(-0.2√(0.5(x² + y²))) - e^(0.5(cos(2πx) + cos(2πy)))
+            + 20 + e
+          </option>
+          <option value="custom">Custom Function</option>
+        </select>
+      </label>
+
+      <div id="customInputs">
+        <label
+          >f(x, y):
+          <input type="text" id="customF" placeholder="e.g., x*x + y*y"
+        /></label>
+        <label
+          >∂f/∂x: <input type="text" id="customGradX" placeholder="e.g., 2*x"
+        /></label>
+        <label
+          >∂f/∂y: <input type="text" id="customGradY" placeholder="e.g., 2*y"
+        /></label>
+      </div>
+
+      <button id="run">Run Gradient Descent</button>
+    </div>
+
+    <canvas id="canvas" width="800" height="500"></canvas>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
